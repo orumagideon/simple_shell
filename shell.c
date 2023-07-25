@@ -1,19 +1,13 @@
 #include "shell.h"
 #include <sys/wait.h>
 
-/**
- * main - Prompt user.
- *
- * Return: always 0
- */
-
 extern char **environ;
 
 int main(void)
 {
-    char *prompt = "cisfun$ "; // Prompt to be displayed
+    char *prompt = "cisfun$ ";
     size_t n = 0;
-    char *lineptr = NULL; // Pointer to the user input line
+    char *lineptr = NULL;
     ssize_t character_count;
     pid_t pid;
     int status;
@@ -24,21 +18,21 @@ int main(void)
         char **argv;
         int i = 0;
 
-        printf("%s", prompt); // Display the prompt
-        character_count = getline(&lineptr, &n, stdin); // Read user input from stdin
+        printf("%s", prompt);
+        character_count = getline(&lineptr, &n, stdin);
         if (character_count == -1)
         {
-            printf("exit\n"); // If getline returns -1, it indicates an error or end of file
+            printf("exit\n");
             free(lineptr);
             exit(0);
         }
 
-        lineptr[character_count - 1] = '\0';  // Remove the newline character from the input
+        lineptr[character_count - 1] = '\0';  /*Remove the newline character */
 
         if (strcmp(lineptr, "exit") == 0)
         {
             free(lineptr);
-            exit(0); // Exit the shell if the user types "exit"
+            exit(0);
         }
 
         if (strcmp(lineptr, "env") == 0)
@@ -46,48 +40,47 @@ int main(void)
             char **env = environ;
             while (*env)
             {
-                printf("%s\n", *env); // Print the environment variables
+                printf("%s\n", *env);
                 env++;
             }
-            continue;  // Skip to the next iteration of the loop
+            continue;  /*Skip to next iteration of the loop */
         }
 
-        token = strtok(lineptr, " "); // Tokenize the input line by spaces
+        token = strtok(lineptr, " ");
         argv = malloc(sizeof(char *) * (character_count / 2 + 1));
 
         while (token != NULL)
         {
-            argv[i] = strdup(token); // Create an argument vector
+            argv[i] = strdup(token);
             token = strtok(NULL, " ");
             i++;
         }
 
-        argv[i] = NULL; // Set the last element of the argument vector to NULL
+        argv[i] = NULL;
 
         pid = fork();
 
         if (pid == -1)
         {
-            perror("fork"); // Check for fork errors
+            perror("fork");
             exit(1);
         }
         else if (pid == 0)
         {
-            /* Child process */
-            execvp(argv[0], argv); // Execute the command entered by the user
-            perror("execvp"); // If execvp returns, it indicates an error
+            /*Child process*/
+            execvp(argv[0], argv);
+            perror("execvp");
             exit(1);
         }
         else
         {
-            /* Parent process */
-            waitpid(pid, &status, 0); // Wait for the child process to complete
+            /*Parent process */
+            waitpid(pid, &status, 0);
         }
 
-        free_tokens(argv); // Free the memory allocated for the argument vector
-        free(lineptr); // Free the memory allocated for the input line
+        free_tokens(argv);
+        free(lineptr);
     }
 
     return 0;
 }
-
