@@ -9,8 +9,8 @@
 #include <sys/stat.h>
 
 void execmd(char **argv);
-char *find_location(char *command); /*searches for location of the executive */
+char *find_location(char *command); /*searches for location of the executable file */
 int is_builtin(char *command);
-void free_tokens(char **tokens); /*frees memory*/
+void free_tokens(char **tokens);
 
 #endif

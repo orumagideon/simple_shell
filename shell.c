@@ -1,8 +1,44 @@
 #include "shell.h"
 #include <sys/wait.h>
-#include <unistd.h>
 
 extern char **environ;
+
+ssize_t _getline(char **lineptr, size_t *n, FILE *stream) {
+    static char buffer[4096];
+    static char *bufptr = buffer;
+    static size_t nleft = 0;
+    ssize_t nread;
+    
+    char *newline;
+
+    if (nleft == 0) {
+        nread = read(fileno(stream), buffer, sizeof(buffer));
+        if (nread <= 0) {
+            return nread;
+        }
+        bufptr = buffer;
+        nleft = nread;
+    }
+
+    *lineptr = bufptr;
+
+    newline = memchr(bufptr, '\n', nleft);
+    if (newline) {
+        *newline = '\0';
+        nread = newline - bufptr + 1;
+    } else {
+        nread = nleft;
+    }
+
+    bufptr += nread;
+    nleft -= nread;
+
+    if (n) {
+        *n = nread;
+    }
+
+    return nread;
+}
 
 int main(void)
 {
@@ -19,35 +55,15 @@ int main(void)
         char **argv;
         int i = 0;
 
-        write(1, prompt, strlen(prompt));
-
-        character_count = getline(&lineptr, &n, stdin);
+        printf("%s", prompt);
+        character_count = _getline(&lineptr, &n, stdin);
         if (character_count == -1)
         {
-            write(1, "exit\n", 5);
-            free(lineptr);
+            printf("exit\n");
             exit(0);
         }
 
         lineptr[character_count - 1] = '\0';  /*Remove the newline character */
-
-        if (strcmp(lineptr, "exit") == 0)
-        {
-            free(lineptr);
-            exit(0);
-        }
-
-        if (strcmp(lineptr, "env") == 0)
-        {
-            char **env = environ;
-            while (*env)
-            {
-                write(1, *env, strlen(*env));
-                write(1, "\n", 1);
-                env++;
-            }
-            continue;  /*Skip to the next iteration of the loop */
-        }
 
         token = strtok(lineptr, " ");
         argv = malloc(sizeof(char *) * (character_count / 2 + 1));
@@ -61,29 +77,30 @@ int main(void)
 
         argv[i] = NULL;
 
-        pid = fork();
+        if (argv[0] != NULL) {
+            pid = fork();
 
-        if (pid == -1)
-        {
-            perror("fork");
-            exit(1);
-        }
-        else if (pid == 0)
-        {
-            /*Child process*/
-            execvp(argv[0], argv);
-            perror("execvp");
-            exit(1);
-        }
-        else
-        {
-            /*Parent process */
-            waitpid(pid, &status, 0);
+            if (pid == -1)
+            {
+                perror("fork");
+                exit(1);
+            }
+            else if (pid == 0)
+            {
+                /*Child process*/
+                execmd(argv);
+                perror("execvp");
+                exit(1);
+            }
+            else
+            {
+                /*Parent process */
+                waitpid(pid, &status, 0);
+            }
         }
 
         free_tokens(argv);
-        free(lineptr);
     }
 
-    return (0);
+    return 0;
 }
