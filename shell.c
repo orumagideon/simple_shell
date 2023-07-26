@@ -3,6 +3,10 @@
 
 extern char **environ;
 
+/**
+ * main - Entry point for the simple shell program
+ * Return: 0 on success, 1 on failure
+ */
 int main(void)
 {
     char *prompt = "cisfun$ ";
@@ -27,24 +31,7 @@ int main(void)
             exit(0);
         }
 
-        lineptr[character_count - 1] = '\0';  /*Remove the newline character */
-
-        if (strcmp(lineptr, "exit") == 0)
-        {
-            free(lineptr);
-            exit(0);
-        }
-
-        if (strcmp(lineptr, "env") == 0)
-        {
-            char **env = environ;
-            while (*env)
-            {
-                printf("%s\n", *env);
-                env++;
-            }
-            continue;  /*Skip to next iteration of the loop */
-        }
+        lineptr[character_count - 1] = '\0';
 
         token = strtok(lineptr, " ");
         argv = malloc(sizeof(char *) * (character_count / 2 + 1));
@@ -58,6 +45,14 @@ int main(void)
 
         argv[i] = NULL;
 
+        if (is_builtin(argv[0]))
+        {
+            execmd(argv);
+            free_tokens(argv);
+            free(lineptr);
+            continue;
+        }
+
         pid = fork();
 
         if (pid == -1)
@@ -67,14 +62,12 @@ int main(void)
         }
         else if (pid == 0)
         {
-            /*Child process*/
             execvp(argv[0], argv);
             perror("execvp");
             exit(1);
         }
         else
         {
-            /*Parent process */
             waitpid(pid, &status, 0);
         }
 

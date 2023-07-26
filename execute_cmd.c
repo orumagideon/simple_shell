@@ -1,5 +1,9 @@
 #include "shell.h"
 
+/**
+ * free_tokens - Frees memory allocated for tokens
+ * @tokens: Array of tokens to be freed
+ */
 void free_tokens(char **tokens) {
     char **current_token = tokens;
     while (*current_token) {
@@ -11,6 +15,11 @@ void free_tokens(char **tokens) {
 
 extern char **environ;
 
+/**
+ * is_builtin - Checks if a command is a built-in command
+ * @command: The command to check
+ * Return: 1 if built-in, 0 otherwise
+ */
 int is_builtin(char *command)
 {
     if (strcmp(command, "cd") == 0 || strcmp(command, "pwd") == 0 || strcmp(command, "exit") == 0 ||
@@ -21,9 +30,13 @@ int is_builtin(char *command)
     }
 }
 
+/**
+ * execmd - Executes a built-in command
+ * @argv: The command and its arguments
+ */
 void execmd(char **argv)
 {
-    char *command = NULL, *final_command = NULL;
+    char *command = NULL;
 
     if (argv) {
         command = argv[0];
@@ -60,12 +73,6 @@ void execmd(char **argv)
                 printf("Unknown command: %s\n", command);
             }
             return;
-        }
-
-        final_command = find_location(command);
-
-        if (final_command != NULL && execve(final_command, argv, NULL) == -1) {
-            perror("Error:");
         }
     }
 }

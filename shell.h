@@ -8,8 +8,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+/* Function Prototypes */
 void execmd(char **argv);
-char *find_location(char *command); /*searches for location of the executable file */
+char *find_location(char *command);
 int is_builtin(char *command);
 void free_tokens(char **tokens);
 

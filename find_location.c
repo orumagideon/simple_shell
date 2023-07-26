@@ -1,5 +1,10 @@
 #include "shell.h"
 
+/**
+ * find_location - Searches for the location of the executable file
+ * @command: The command to search for
+ * Return: The path of the executable file, or NULL if not found
+ */
 char *find_location(char *command)
 {
     char *path;
