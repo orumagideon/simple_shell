@@ -5,6 +5,7 @@
  * @command: The command to search for
  * Return: The path of the executable file, or NULL if not found
  */
+
 char *find_location(char *command)
 {
     char *path;
