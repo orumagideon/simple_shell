@@ -1,5 +1,6 @@
 #include "shell.h"
 #include <sys/wait.h>
+#include <unistd.h>
 
 extern char **environ;
 
@@ -18,11 +19,12 @@ int main(void)
         char **argv;
         int i = 0;
 
-        printf("%s", prompt);
+        write(1, prompt, strlen(prompt));
+
         character_count = getline(&lineptr, &n, stdin);
         if (character_count == -1)
         {
-            printf("exit\n");
+            write(1, "exit\n", 5);
             free(lineptr);
             exit(0);
         }
@@ -40,10 +42,11 @@ int main(void)
             char **env = environ;
             while (*env)
             {
-                printf("%s\n", *env);
+                write(1, *env, strlen(*env));
+                write(1, "\n", 1);
                 env++;
             }
-            continue;  /*Skip to next iteration of the loop */
+            continue;  /*Skip to the next iteration of the loop */
         }
 
         token = strtok(lineptr, " ");
@@ -82,5 +85,5 @@ int main(void)
         free(lineptr);
     }
 
-    return 0;
+    return (0);
 }
