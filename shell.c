@@ -3,43 +3,6 @@
 
 extern char **environ;
 
-ssize_t _getline(char **lineptr, size_t *n, FILE *stream) {
-    static char buffer[4096];
-    static char *bufptr = buffer;
-    static size_t nleft = 0;
-    ssize_t nread;
-    
-    char *newline;
-
-    if (nleft == 0) {
-        nread = read(fileno(stream), buffer, sizeof(buffer));
-        if (nread <= 0) {
-            return nread;
-        }
-        bufptr = buffer;
-        nleft = nread;
-    }
-
-    *lineptr = bufptr;
-
-    newline = memchr(bufptr, '\n', nleft);
-    if (newline) {
-        *newline = '\0';
-        nread = newline - bufptr + 1;
-    } else {
-        nread = nleft;
-    }
-
-    bufptr += nread;
-    nleft -= nread;
-
-    if (n) {
-        *n = nread;
-    }
-
-    return nread;
-}
-
 int main(void)
 {
     char *prompt = "cisfun$ ";
@@ -54,16 +17,36 @@ int main(void)
         char *token;
         char **argv;
         int i = 0;
+        char *command;
+        char *final_command;
 
         printf("%s", prompt);
-        character_count = _getline(&lineptr, &n, stdin);
+        character_count = getline(&lineptr, &n, stdin);
         if (character_count == -1)
         {
             printf("exit\n");
+            free(lineptr);
             exit(0);
         }
 
-        lineptr[character_count - 1] = '\0';  /*Remove the newline character */
+        lineptr[character_count - 1] = '\0';  /* Remove the newline character */
+
+        if (strcmp(lineptr, "exit") == 0)
+        {
+            free(lineptr);
+            exit(0);
+        }
+
+        if (strcmp(lineptr, "env") == 0)
+        {
+            char **env = environ;
+            while (*env)
+            {
+                printf("%s\n", *env);
+                env++;
+            }
+            continue;  /* Skip to the next iteration of the loop */
+        }
 
         token = strtok(lineptr, " ");
         argv = malloc(sizeof(char *) * (character_count / 2 + 1));
@@ -77,29 +60,43 @@ int main(void)
 
         argv[i] = NULL;
 
-        if (argv[0] != NULL) {
-            pid = fork();
+        command = argv[0];
+        if (command == NULL)
+        {
+            free_tokens(argv);
+            continue;
+        }
 
-            if (pid == -1)
-            {
-                perror("fork");
-                exit(1);
-            }
-            else if (pid == 0)
-            {
-                /*Child process*/
-                execmd(argv);
-                perror("execvp");
-                exit(1);
-            }
-            else
-            {
-                /*Parent process */
-                waitpid(pid, &status, 0);
-            }
+        final_command = find_location(command);
+        if (final_command == NULL)
+        {
+            printf("Command not found: %s\n", command);
+            free_tokens(argv);
+            continue;
+        }
+
+        pid = fork();
+
+        if (pid == -1)
+        {
+            perror("fork");
+            exit(1);
+        }
+        else if (pid == 0)
+        {
+            /* Child process */
+            execve(final_command, argv, environ);
+            perror("execve");
+            exit(1);
+        }
+        else
+        {
+            /* Parent process */
+            waitpid(pid, &status, 0);
         }
 
         free_tokens(argv);
+        free(lineptr);
     }
 
     return 0;

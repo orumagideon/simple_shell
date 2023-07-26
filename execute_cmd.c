@@ -46,12 +46,8 @@ void execmd(char **argv)
                 }
             } else if (strcmp(command, "exit") == 0) {
                 /*Handle exit command */
-                int status = 0;
-                if (argv[1] != NULL) {
-                    status = atoi(argv[1]);
-                }
                 free_tokens(argv);
-                exit(status);
+                exit(0);
             } else if (strcmp(command, "env") == 0) {
                 /*Handle env command */
                 char **env = environ;
@@ -68,7 +64,7 @@ void execmd(char **argv)
 
         final_command = find_location(command);
 
-        if (final_command != NULL && execve(final_command, argv, environ) == -1) {
+        if (final_command != NULL && execve(final_command, argv, NULL) == -1) {
             perror("Error:");
         }
     }
