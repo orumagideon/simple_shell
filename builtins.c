@@ -1,5 +1,8 @@
 #include "shell.h"
 #include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include <unistd.h>
 
 extern char **environ;
 
@@ -82,13 +85,15 @@ void execmd(char **argv)
 
         final_command = find_location(command);
 
+        if (final_command == NULL || access(final_command, X_OK) == -1)
+        {
+            printf("%s: command not found\n", command);
+            return;
+        }
+
         if (final_command != NULL && execve(final_command, argv, environ) == -1)
         {
             perror("Error");
-        }
-        else
-        {
-            printf("%s: command not found\n", command);
         }
     }
 }
