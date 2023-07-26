@@ -1,20 +1,25 @@
 #include "shell.h"
 #include <sys/wait.h>
+#include <signal.h>
 
 extern char **environ;
 
-/**
- * main - Entry point for the simple shell program
- * Return: 0 on success, 1 on failure
- */
+void handle_sigint(int sig)
+{
+    (void)sig;
+    write(STDOUT_FILENO, "\n", 1);
+}
+
 int main(void)
 {
-    char *prompt = "cisfun$ ";
+    char *prompt = "#cisfun$ ";
     size_t n = 0;
     char *lineptr = NULL;
     ssize_t character_count;
-    pid_t pid;
     int status;
+    pid_t pid;
+
+    signal(SIGINT, handle_sigint);
 
     while (1)
     {
@@ -26,12 +31,29 @@ int main(void)
         character_count = getline(&lineptr, &n, stdin);
         if (character_count == -1)
         {
-            printf("exit\n");
+            printf("\n");
+            exit(0);
+        }
+
+        lineptr[character_count - 1] = '\0'; /* Remove the newline character */
+
+        if (strcmp(lineptr, "exit") == 0)
+        {
             free(lineptr);
             exit(0);
         }
 
-        lineptr[character_count - 1] = '\0';
+        if (strcmp(lineptr, "env") == 0)
+        {
+            char **env = environ;
+            while (*env)
+            {
+                printf("%s\n", *env);
+                env++;
+            }
+            free(lineptr);
+            continue; /* Skip to the next iteration of the loop */
+        }
 
         token = strtok(lineptr, " ");
         argv = malloc(sizeof(char *) * (character_count / 2 + 1));
@@ -45,14 +67,6 @@ int main(void)
 
         argv[i] = NULL;
 
-        if (is_builtin(argv[0]))
-        {
-            execmd(argv);
-            free_tokens(argv);
-            free(lineptr);
-            continue;
-        }
-
         pid = fork();
 
         if (pid == -1)
@@ -62,18 +76,20 @@ int main(void)
         }
         else if (pid == 0)
         {
-            execvp(argv[0], argv);
-            perror("execvp");
+            /* Child process */
+            execmd(argv);
+            perror("execmd");
             exit(1);
         }
         else
         {
+            /* Parent process */
             waitpid(pid, &status, 0);
         }
 
         free_tokens(argv);
-        free(lineptr);
     }
 
+    free(lineptr);
     return 0;
 }
