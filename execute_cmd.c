@@ -1,120 +1,71 @@
 #include "shell.h"
-#include <string.h>
 
-/**
- * interactive - returns 1 if shell is in interactive mode
- * @info: the structure address
- *
- * Return: 1 if interactive mode, 0 otherwise
- */
-int interactive(info_t *info)
-{
-    return (isatty(STDIN_FILENO) && info->readfd <= 2);
-}
-
-/**
- * display_prompt - display the shell prompt
- * @newline: boolean to include newline character
- */
-void display_prompt(int newline)
-{
-    if (newline)
-        write(STDOUT_FILENO, "\n", 1);
-    write(STDOUT_FILENO, "$ ", 2);
-}
-
-/**
- * get_line - read a line from stdin
- * @info: the structure address
- *
- * Return: length of the line on success, -1 on end of file or error
- */
-int get_line(info_t *info)
-{
-    ssize_t len = 0;
-    size_t buf_size = 0;
-
-    len = getline(&(info->line), &buf_size, stdin);
-    if (len == -1)
-        return (-1);
-
-    info->line[len - 1] = '\0';
-    return (len);
-}
-
-/**
- * parse_line - parse the line into arguments
- * @info: the structure address
- */
-void parse_line(info_t *info)
-{
-    char *token;
-    int i = 0;
-
-    info->argv = malloc(sizeof(char *) * 2);
-    token = strtok(info->line, " ");
-    while (token)
-    {
-        info->argv[i++] = token;
-        token = strtok(NULL, " ");
-        info->argv = realloc(info->argv, sizeof(char *) * (i + 1));
+void free_tokens(char **tokens) {
+    char **current_token = tokens;
+    while (*current_token) {
+        free(*current_token);
+        ++current_token;
     }
-    info->argv[i] = NULL;
-    info->argc = i;
+    free(tokens);
 }
 
-/**
- * execute_line - execute the command in the line
- * @info: the structure address
- */
-void execute_line(info_t *info)
+extern char **environ;
+
+int is_builtin(char *command)
 {
-    pid_t pid;
-    int status;
-
-    if (strcmp(info->argv[0], "exit") == 0)
-    {
-        _myexit(info);
-        exit(0);
+    if (strcmp(command, "cd") == 0 || strcmp(command, "pwd") == 0 || strcmp(command, "exit") == 0 ||
+        strcmp(command, "env") == 0) {
+        return 1;
+    } else {
+        return 0;
     }
-    else if (strcmp(info->argv[0], "env") == 0)
-    {
-        _myenv(info);
-        return;
-    }
-
-    pid = fork();
-    if (pid == 0)
-    {
-        if (execve(info->argv[0], info->argv, info->env) == -1)
-            perror("Error");
-        exit(1);
-    }
-    else
-        wait(&status);
 }
 
-/**
- * init_info - initialize the info structure
- * @info: the structure address
- * @env: environment variables
- */
-void init_info(info_t *info, char **env)
+void execmd(char **argv)
 {
-    info->env = env;
-    info->line = NULL;
-    info->argv = NULL;
-    info->readfd = STDIN_FILENO;
-}
+    char *command = NULL, *final_command = NULL;
 
-/**
- * free_info - free info structure members
- * @info: the structure address
- */
-void free_info(info_t *info)
-{
-    free(info->line);
-    info->line = NULL;
-    free(info->argv);
-    info->argv = NULL;
+    if (argv) {
+        command = argv[0];
+
+        if (is_builtin(command)) {
+            if (strcmp(command, "cd") == 0) {
+                /*Handle cd command */
+                if (argv[1] != NULL) {
+                    if (chdir(argv[1]) != 0) {
+                        perror("cd");
+                    }
+                }
+            } else if (strcmp(command, "pwd") == 0) {
+                /*Handle pwd command */
+                char cwd[1024];
+                if (getcwd(cwd, sizeof(cwd)) != NULL) {
+                    printf("%s\n", cwd);
+                } else {
+                    perror("pwd");
+                }
+            } else if (strcmp(command, "exit") == 0) {
+                /*Handle exit command */
+                free_tokens(argv);
+                exit(0);
+            } else if (strcmp(command, "env") == 0) {
+                /*Handle env command */
+                char **env = environ;
+                while (*env) {
+                    printf("%s\n", *env);
+                    env++;
+                }
+            } else {
+                /*Unknown built-in command */
+                printf("Unknown command: %s\n", command);
+            }
+            return;
+        }
+
+        final_command = find_location(command);
+
+        if (final_command != NULL && execve(final_command, argv, NULL) == -1) {
+            perror("Error:");
+        }
+    }
 }
