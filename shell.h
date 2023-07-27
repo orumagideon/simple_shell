@@ -30,7 +30,7 @@ char *path_cat(char *dir, char *av);
 char **dirTok(char **env);
 char *checkPath(char **dir, char *command);
 
-/* int prototypes */
+/* int prototype */
 int _strcmp(char *strng1, char *strng2);
 int _strlen(char *s);
 int execute(char *fullPath, char **command);
