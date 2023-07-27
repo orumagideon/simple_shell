@@ -1,11 +1,11 @@
 #include "shell.h"
 /**
- * pathCat - concats directory and user input to check for builitin
- * @dir: directory
- * @input: user input
- * Return: buffer to directory
+ * path_cat - function concats directory, input to check for builitin
+ * @dir: The directory
+ * @input: The user input
+ * Return: The buffer to directory
  */
-char *pathCat(char *dir, char *input)
+char *path_cat(char *dir, char *input)
 {
 	int i, k, len1, len2;
 	char *buf;
@@ -34,8 +34,8 @@ char *pathCat(char *dir, char *input)
 }
 
 /**
- * get_env - gets env in order to navigate PATH
- * @env: double pointer
+ * get_env - function gets env to navigate PATH
+ * @env: The double pointer
  * Return: buf
  */
 char *get_env(char **env)
@@ -80,8 +80,8 @@ char *get_env(char **env)
 	return (buf);
 }
 /**
- * dirTok - split directories to tokens
- * @env: double pointer
+ * dirTok - Function splits directories to tokens
+ * @env: The double pointer
  * Return: tokens
  */
 char **dirTok(char **env)
@@ -111,10 +111,10 @@ char **dirTok(char **env)
 }
 
 /**
- * checkPath - checks command input against path
- * @dir: dirctory tokens
- * @command: command line input
- * Return: full path on success
+ * checkPath - function checks command input to  path
+ * @dir: The dirctory tokens
+ * @command: The command line input
+ * Return: The full path on success
  */
 char *checkPath(char **dir, char *command)
 {
@@ -126,7 +126,7 @@ char *checkPath(char **dir, char *command)
 
 	while (*dir)
 	{
-		fullPath = pathCat(*dir, command);
+		fullPath = path_cat(*dir, command);
 		if (stat(fullPath, &st) == 0)
 			return (fullPath);
 		dir++;

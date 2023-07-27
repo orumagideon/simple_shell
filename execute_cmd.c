@@ -1,9 +1,9 @@
 #include "shell.h"
 
 /**
- * execute - forks to child process to execute command
- * @fullPath: full directory with command
- * @command: user input
+ * execute - function forks child process to execute cmd
+ * @fullPath: The full directory with command
+ * @command: The user input
  * Return: status
  */
 int execute(char *fullPath, char **command)
