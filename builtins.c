@@ -1,99 +1,77 @@
 #include "shell.h"
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include <unistd.h>
 
-extern char **environ;
-
-void builtin_cd(char **argv)
+/**
+ * exit_sh - function to exit from shell
+ * @command: input from command
+ * Return: 0 for success
+ */
+int exit_sh(char **command)
 {
-    if (argv[1] != NULL)
-    {
-        if (chdir(argv[1]) != 0)
-        {
-            perror("cd");
-        }
-    }
+	if (*command)
+	{
+		buffers1(NULL, NULL);
+		buffers2(NULL, NULL);
+		buffers3(NULL, NULL);
+		buffers4(NULL, NULL);
+		buffers5(NULL);
+		exit(2);
+	}
+	return (0);
 }
 
-void builtin_pwd()
+/**
+ * cd - function to change directory
+ * @command: input from command
+ * Return: 0 for success
+ */
+int cd(char **command)
 {
-    char cwd[1024];
-    if (getcwd(cwd, sizeof(cwd)) != NULL)
-    {
-        printf("%s\n", cwd);
-    }
-    else
-    {
-        perror("pwd");
-    }
+	chdir(command[1]);
+	return (0);
 }
 
-int is_builtin(char *command)
+/**
+ * printenv - function to print env
+ * @command: pointer to command
+ * Return: 0 for success
+ */
+int printenv(char **command)
 {
-    if (strcmp(command, "cd") == 0 || strcmp(command, "pwd") == 0 || strcmp(command, "exit") == 0 ||
-        strcmp(command, "env") == 0)
-    {
-        return 1;
-    }
-    else
-    {
-        return 0;
-    }
+	int i;
+
+	if (*command)
+	{
+		i = 0;
+		while (environ[i])
+		{
+			write(1, environ[i], _strlen(environ[i]));
+			write(1, "\n", 1);
+			i++;
+		}
+	}
+	return (0);
 }
 
-void execmd(char **argv)
+/**
+ * checkBuiltins - check for builtins and call function
+ * @combine: full directory
+ * @command: command line input
+ * Return: path to builtin or process from directory
+ */
+int checkBuiltins(char *combine, char **command)
 {
-    char *command = NULL, *final_command = NULL;
+	int i;
+	char *array[] = {"exit", "cd", "env", NULL};
 
-    if (argv)
-    {
-        command = argv[0];
+	typedef int (*Builtins)(char **);
+	Builtins functions[] = {&exit_sh, &cd, &printenv};
 
-        if (is_builtin(command))
-        {
-            if (strcmp(command, "cd") == 0)
-            {
-                builtin_cd(argv);
-            }
-            else if (strcmp(command, "pwd") == 0)
-            {
-                builtin_pwd();
-            }
-            else if (strcmp(command, "exit") == 0)
-            {
-                free_tokens(argv);
-                exit(0);
-            }
-            else if (strcmp(command, "env") == 0)
-            {
-                char **env = environ;
-                while (*env)
-                {
-                    printf("%s\n", *env);
-                    env++;
-                }
-            }
-            else
-            {
-                /* Unknown built-in command */
-                printf("Unknown command: %s\n", command);
-            }
-            return;
-        }
-
-        final_command = find_location(command);
-
-        if (final_command == NULL || access(final_command, X_OK) == -1)
-        {
-            printf("%s: command not found\n", command);
-            return;
-        }
-
-        if (final_command != NULL && execve(final_command, argv, environ) == -1)
-        {
-            perror("Error");
-        }
-    }
+	i = 0;
+	while (array[i] != NULL)
+	{
+		if (_strcmp(array[i], command[0]) == 0)
+			return (functions[i](command));
+		i++;
+	}
+	return (execute(combine, command));
 }

@@ -1,58 +1,135 @@
 #include "shell.h"
-
-char *find_location(char *command)
+/**
+ * pathCat - concats directory and user input to check for builitin
+ * @dir: directory
+ * @input: user input
+ * Return: buffer to directory
+ */
+char *pathCat(char *dir, char *input)
 {
-    char *path;
-    struct stat buffer;
+	int i, k, len1, len2;
+	char *buf;
 
-    if (command == NULL)
-    {
-        return NULL;
-    }
+	len1 = _strlen(dir);
+	len2 = _strlen(input);
 
-    path = getenv("PATH");
+	buf = malloc(4096);
+	buffers4(NULL, buf);
 
-    /* Check if it is a built-in command */
-    if (is_builtin(command))
-    {
-        return NULL;
-    }
+	i = 0;
+	while (i < len1)
+	{
+		buf[i] = dir[i];
+		i++;
+	}
+	k = 0;
+	while (i < (len1 + len2))
+	{
+		buf[i] = input[k];
+		i++;
+		k++;
+	}
+	buf[i] = '\0';
+	return (buf);
+}
 
-    /* Check if it is an executable script in the current directory */
-    if (stat(command, &buffer) == 0)
-    {
-        return strdup(command);
-    }
+/**
+ * get_env - gets env in order to navigate PATH
+ * @env: double pointer
+ * Return: buf
+ */
+char *get_env(char **env)
+{
+	int i, k;
+	char *start, *buf, *str = "PATH=";
 
-    if (path != NULL)
-    {
-        char *path_replica = strdup(path);
-        int length_command = strlen(command);
-        char *path_tokens = strtok(path_replica, ":");
+	i = 0;
+	while (env[i])
+	{
+		k = 0;
+		while (env[i][k] == str[k])
+		{
+			if (env[i][k + 1] == str[k + 1])
+			{
+				start = env[i];
+				break;
+			}
+			k++;
+		}
+		i++;
+	}
+	_strlen(start);
+	buf = malloc(4096);
+	buffers3(NULL, buf);
+	i = 0;
+	k = 0;
+	while (start[i] != '\0')
+	{
+		if (start[i] == ':')
+		{
+			buf[k] = '/';
+			k++;
+		}
+		buf[k] = start[i];
+		i++;
+		k++;
+	}
+	buf[k] = '/';
+	k++;
+	buf[k] = '\0';
+	return (buf);
+}
+/**
+ * dirTok - split directories to tokens
+ * @env: double pointer
+ * Return: tokens
+ */
+char **dirTok(char **env)
+{
+	char **tokens;
+	char *tok;
+	int i, j;
+	char *dir;
 
-        while (path_tokens != NULL)
-        {
-            int length_directory = strlen(path_tokens);
-            char *file_path = malloc(length_command + length_directory + 2);
+	dir = get_env(env);
+	i = 0;
+	j = 0;
+	while (env[j])
+		j++;
+	tokens = malloc(4096);
+	buffers3(tokens, NULL);
 
-            strcpy(file_path, path_tokens);
-            strcat(file_path, "/");
-            strcat(file_path, command);
-            strcat(file_path, "\0");
+	tok = strtok(dir, " :");
+	while (tok != NULL)
+	{
+		tokens[i] = tok;
+		i++;
+		tok = strtok(NULL, " :");
+	}
+	tokens[i] = NULL;
+	return (tokens);
+}
 
-            if (stat(file_path, &buffer) == 0)
-            {
-                free(path_replica);
-                return file_path;
-            }
-            else
-            {
-                free(file_path);
-                path_tokens = strtok(NULL, ":");
-            }
-        }
-        free(path_replica);
-    }
+/**
+ * checkPath - checks command input against path
+ * @dir: dirctory tokens
+ * @command: command line input
+ * Return: full path on success
+ */
+char *checkPath(char **dir, char *command)
+{
+	struct stat st;
+	char *fullPath;
 
-    return NULL;
+	if (command[0] == '/')
+		return (command);
+
+	while (*dir)
+	{
+		fullPath = pathCat(*dir, command);
+		if (stat(fullPath, &st) == 0)
+			return (fullPath);
+		dir++;
+	}
+	return (NULL);
 }
