@@ -1,67 +1,77 @@
 #include "shell.h"
 
 /**
- * is_builtin - This program checks to see if a command is
- * a builtin function and if so, executes it
- * @cmd: a vector array of command line arguments
- * @b: line_buffer created in main
- *
- * Return: 1 if command is a builtin, 0 otherwise
+ * exit_sh - function to exit from shell
+ * @command: input from command
+ * Return: 0 for success
  */
-
-int is_builtin(char **cmd, char *b)
+int exit_sh(char **command)
 {
-	struct builtins builtins = { "env", "exit" };
-
-	if (_strcmp(*cmd, builtins.env) == 0)
+	if (*command)
 	{
-		env_builtin();
-		return (1);
+		buffers1(NULL, NULL);
+		buffers2(NULL, NULL);
+		buffers3(NULL, NULL);
+		buffers4(NULL, NULL);
+		buffers5(NULL);
+		exit(2);
 	}
-	else if (_strcmp(*cmd, builtins.exit) == 0)
-	{
-		exiter(cmd, b);
-		return (1);
-	}
-	else
-	{
-		return (0);
-	}
+	return (0);
 }
 
-
 /**
- * exiter - This program frees the buffer and
- * exits the program
- * @cmd: a vector array of command line arguments
- * @b: line_buffer created in main
- *
- * Return: void
+ * cd - function to change directory
+ * @command: input from command
+ * Return: 0 for success
  */
-
-void exiter(char **cmd, char *b)
+int cd(char **command)
 {
-	free(b);
-	free_cmds(cmd);
-	exit(0);
+	chdir(command[1]);
+	return (0);
 }
 
+/**
+ * printenv - function to print env
+ * @command: pointer to command
+ * Return: 0 for success
+ */
+int printenv(char **command)
+{
+	int i;
+
+	if (*command)
+	{
+		i = 0;
+		while (environ[i])
+		{
+			write(1, environ[i], _strlen(environ[i]));
+			write(1, "\n", 1);
+			i++;
+		}
+	}
+	return (0);
+}
 
 /**
- * env_builtin - This program is prints the current
- * environment
- *
- * Return: 0
+ * checkBuiltins - check for builtins and call function
+ * @combine: full directory
+ * @command: command line input
+ * Return: path to builtin or process from directory
  */
-void env_builtin(void)
+int checkBuiltins(char *combine, char **command)
 {
-	int i = 0;
-	char **env = environ;
+	int i;
+	char *array[] = {"exit", "cd", "env", NULL};
 
-	while (env[i])
+	typedef int (*Builtins)(char **);
+	Builtins functions[] = {&exit_sh, &cd, &printenv};
+
+	i = 0;
+	while (array[i] != NULL)
 	{
-		write(STDOUT_FILENO, (const void *) env[i], _strlen(env[i]));
-		write(STDOUT_FILENO, "\n", 1);
+		if (_strcmp(array[i], command[0]) == 0)
+			return (functions[i](command));
 		i++;
 	}
+	return (execute(combine, command));
 }
