@@ -1,27 +1,34 @@
 #include "shell.h"
 
 /**
- * execute - forks to child process to execute command
- * @fullPath: full directory with command
- * @command: user input
- * Return: status
+ * exec_cmd - This program creates a new child process,
+ * executes a command, and waits for the child process
+ * to update its status
+ * @c: command
+ * @cmd: vector array of pointers to commands
+ *
+ * Return: void
  */
-int execute(char *fullPath, char **command)
-{
-	pid_t child;
-	int status = 0;
-	struct stat st;
 
-	child = fork();
-	if (child == 0)
+void exec_cmd(char *c, char **cmd)
+{
+	pid_t newProcess;
+	int status;
+	char **envp = environ;
+
+	newProcess = fork();
+	if (newProcess < 0)
+		perror(c);
+	if (newProcess == 0)
 	{
-		if (stat(fullPath, &st) == 0)
-		{
-			status = execve(fullPath, command, environ);
-			exit(status);
-		}
+		execve(c, cmd, envp);
+		perror(c);
+		free(c);
+		free_cmds(cmd);
+		exit(98);
 	}
 	else
-		wait(NULL);
-	return (status);
+	{
+		wait(&status);
+	}
 }

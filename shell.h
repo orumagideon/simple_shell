@@ -1,39 +1,91 @@
-#ifndef _SHELL_H_
-#define _SHELL_H_
+#ifndef __SHELL_H__
+#define __SHELL_H__
 
-#include <string.h>
+/*libraries*/
 #include <stdio.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <sys/stat.h>
 #include <stdlib.h>
-#include <signal.h>
-extern char **environ;
-extern int dircount;
-#define DELIM " \n\t"
+#include <unistd.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+#include <stdbool.h>
 
-void env(char **env);
-int _strlen(char *s);
-int _strcmp(char *s1, char *s2);
+/*string_handlers*/
 char *_strdup(char *str);
-void prompt(void);
-char *get_line(void);
-char **split_line(char *line);
-char *get_env(char **env);
-char *pathCat(char *dir, char *av);
-char **dirTok(char **env);
-void loop(char **env);
-char *checkPath(char **dir, char *command);
-int execute(char *fullPath, char **command);
-int exit_sh(char **command);
-int cd(char **command);
-int printenv(char **command);
-int checkBuiltins(char *combine, char **command);
-void handler(int sig);
-void buffers1(char *line, char **command);
-void buffers2(char **dir, char *combine);
-void buffers3(char **tokens, char *buf);
-void buffers4(char **tok, char *buf2);
-void buffers5(char *dup);
-#endif
+char *_strchr(char *str, int chr);
+int _strlen(const char *str);
+int _strcmp(char *s1, char *s2);
+int _strncmp(const char *first, const char *second, int n);
+
+/*command_handler*/
+char *_getpath(void);
+char **token_maker(char *str);
+void exec_cmd(char *c, char **cmd);
+char *pathappend(char *path, char *cmd);
+char *try_paths(char **p, char *cmd);
+
+/*built-ins*/
+void env_builtin(void);
+void exiter(char **cmd, char *b);
+int is_builtin(char **cmd, char *b);
+void prompt_printer(void);
+void sighandle(int n);
+
+/*helper function*/
+int check_type(char **cmd, char *b);
+void free_cmds(char **m);
+
+
+
+
+/*environment variables*/
+extern __sighandler_t signal(int __sig, __sighandler_t __handler);
+extern char **environ;
+
+/**
+ * struct builtins - Handles builtins
+ * @env: First member
+ * @exit: Second member
+ *
+ * Description: builtin commands
+ */
+struct builtins
+{
+	char *env;
+	char *exit;
+
+} builtins;
+
+
+
+/**
+ * struct info - Status info struct
+ * @final_exit: First member
+ * @ln_count: Second member
+ *
+ * Description: Used in error handling
+ */
+struct info
+{
+	int final_exit;
+	int ln_count;
+} info;
+
+
+/**
+ * struct flags - Holds flags
+ * @interactive: First member
+ *
+ * Description: used to handle
+ * boolean switches
+ */
+struct flags
+{
+	bool interactive;
+} flags;
+
+
+#endif /* __SHELL_H__ */

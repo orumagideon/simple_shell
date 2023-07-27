@@ -1,77 +1,67 @@
 #include "shell.h"
 
 /**
- * exit_sh - function to exit from shell
- * @command: input from command
- * Return: 0 for success
+ * is_builtin - This program checks to see if a command is
+ * a builtin function and if so, executes it
+ * @cmd: a vector array of command line arguments
+ * @b: line_buffer created in main
+ *
+ * Return: 1 if command is a builtin, 0 otherwise
  */
-int exit_sh(char **command)
+
+int is_builtin(char **cmd, char *b)
 {
-	if (*command)
+	struct builtins builtins = { "env", "exit" };
+
+	if (_strcmp(*cmd, builtins.env) == 0)
 	{
-		buffers1(NULL, NULL);
-		buffers2(NULL, NULL);
-		buffers3(NULL, NULL);
-		buffers4(NULL, NULL);
-		buffers5(NULL);
-		exit(2);
+		env_builtin();
+		return (1);
 	}
-	return (0);
-}
-
-/**
- * cd - function to change directory
- * @command: input from command
- * Return: 0 for success
- */
-int cd(char **command)
-{
-	chdir(command[1]);
-	return (0);
-}
-
-/**
- * printenv - function to print env
- * @command: pointer to command
- * Return: 0 for success
- */
-int printenv(char **command)
-{
-	int i;
-
-	if (*command)
+	else if (_strcmp(*cmd, builtins.exit) == 0)
 	{
-		i = 0;
-		while (environ[i])
-		{
-			write(1, environ[i], _strlen(environ[i]));
-			write(1, "\n", 1);
-			i++;
-		}
+		exiter(cmd, b);
+		return (1);
 	}
-	return (0);
+	else
+	{
+		return (0);
+	}
 }
 
+
 /**
- * checkBuiltins - check for builtins and call function
- * @combine: full directory
- * @command: command line input
- * Return: path to builtin or process from directory
+ * exiter - This program frees the buffer and
+ * exits the program
+ * @cmd: a vector array of command line arguments
+ * @b: line_buffer created in main
+ *
+ * Return: void
  */
-int checkBuiltins(char *combine, char **command)
+
+void exiter(char **cmd, char *b)
 {
-	int i;
-	char *array[] = {"exit", "cd", "env", NULL};
+	free(b);
+	free_cmds(cmd);
+	exit(0);
+}
 
-	typedef int (*Builtins)(char **);
-	Builtins functions[] = {&exit_sh, &cd, &printenv};
 
-	i = 0;
-	while (array[i] != NULL)
+/**
+ * env_builtin - This program is prints the current
+ * environment
+ *
+ * Return: 0
+ */
+void env_builtin(void)
+{
+	int i = 0;
+	char **env = environ;
+
+	while (env[i])
 	{
-		if (_strcmp(array[i], command[0]) == 0)
-			return (functions[i](command));
+		write(STDOUT_FILENO, (const void *) env[i], _strlen(env[i]));
+		write(STDOUT_FILENO, "\n", 1);
 		i++;
 	}
-	return (execute(combine, command));
 }
