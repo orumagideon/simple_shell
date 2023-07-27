@@ -9,6 +9,11 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/stat.h>
+<<<<<<< HEAD
+=======
+#include <stdlib.h>
+#include <signal.h>
+>>>>>>> 53bcbaedf5e20f462016e8e53189a292ca78bc53
 
 extern char **environ;
 extern int dircount;
