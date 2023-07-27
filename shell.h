@@ -15,7 +15,7 @@ extern int dircount;
 
 #define DELIM " \n\t"
 
-/* void prototypes */
+/* void prototypess */
 void prompt(void);
 void loop(char **env);
 void handler(int sig);
