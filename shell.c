@@ -1,5 +1,4 @@
 #include "shell.h"
-
 /**
  * main - The main function
  * @argc: the number of arguements
