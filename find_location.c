@@ -1,8 +1,8 @@
 #include "shell.h"
 /**
- * pathCat - Function concat input to check for builitins.
+ * pathCat - concats directory and user input to check for builitin
  * @dir: directory
- * @input: The user input
+ * @input: user input
  * Return: buffer to directory
  */
 char *pathCat(char *dir, char *input)
@@ -34,8 +34,8 @@ char *pathCat(char *dir, char *input)
 }
 
 /**
- * get_env - function gets env to navigate PATH
- * @env: The double pointer
+ * get_env - gets env in order to navigate PATH
+ * @env: double pointer
  * Return: buf
  */
 char *get_env(char **env)
@@ -80,8 +80,8 @@ char *get_env(char **env)
 	return (buf);
 }
 /**
- * dirTok - Function splits directories to tokens
- * @env: The double pointer
+ * dirTok - split directories to tokens
+ * @env: double pointer
  * Return: tokens
  */
 char **dirTok(char **env)
@@ -111,9 +111,9 @@ char **dirTok(char **env)
 }
 
 /**
- * checkPath - Function checks command input to path
- * @dir: the dirctory tokens
- * @command: the command line input
+ * checkPath - checks command input against path
+ * @dir: dirctory tokens
+ * @command: command line input
  * Return: full path on success
  */
 char *checkPath(char **dir, char *command)

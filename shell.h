@@ -9,6 +9,7 @@
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <signal.h>
+
 extern char **environ;
 extern int dircount;
 #define DELIM " \n\t"
