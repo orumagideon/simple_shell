@@ -1,5 +1,4 @@
 #include "shell.h"
-
 /**
  * env - prints the env
  * @env: printed environment.
