@@ -1,24 +1,24 @@
 #include "shell.h"
 /**
  * _strcmp - compares to strings to see if they match
- * @s1: first string argument
- * @s2: second string argument
+ * @strng1: first string argument
+ * @strng2: second string argument
  * Return: 0 for success
  */
-int _strcmp(char *s1, char *s2)
+int _strcmp(char *strng1, char *strng2)
 {
-	while ((*s1 != '\0' && *s2 != '\0') && *s1 == *s2)
+	while ((*strng1 != '\0' && *strng2 != '\0') && *strng1 == *strng2)
 	{
-		s1++;
-		s2++;
+		strng1++;
+		strng2++;
 	}
-	if (*s1 == *s2)
+	if (*strng1 == *strng2)
 	{
 		return (0);
 	}
 	else
 	{
-		return (*s1 - *s2);
+		return (*strng1 - *strng2);
 	}
 }
 

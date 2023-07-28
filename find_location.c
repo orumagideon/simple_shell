@@ -34,8 +34,8 @@ char *pathCat(char *dir, char *input)
 }
 
 /**
- * get_env - gets env in order to navigate PATH
- * @env: double pointer
+ * get_env - function gets env in order to navigate PATH
+ * @env: the double pointer
  * Return: buf
  */
 char *get_env(char **env)
@@ -80,8 +80,8 @@ char *get_env(char **env)
 	return (buf);
 }
 /**
- * dirTok - split directories to tokens
- * @env: double pointer
+ * dirTok - function splits directories to tokens
+ * @env: the double pointer
  * Return: tokens
  */
 char **dirTok(char **env)
@@ -114,7 +114,7 @@ char **dirTok(char **env)
  * checkPath - checks command input against path
  * @dir: dirctory tokens
  * @command: command line input
- * Return: full path on success
+ * Return: path on success
  */
 char *checkPath(char **dir, char *command)
 {

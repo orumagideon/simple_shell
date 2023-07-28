@@ -1,8 +1,7 @@
 #include "shell.h"
 /**
- * loop - function to get user input, tokonize directory and
- * check for builtins. Main loop to initiate shell
- * @env: double pointer
+ * loop - gets user input, tokonize directory
+ * @env: the double pointer
  * Return: void
  */
 void loop(char **env)
@@ -14,14 +13,14 @@ void loop(char **env)
 	while (1)
 	{
 		/**
-		 *  Write prompt, then get user input
+		 *  Write prompt, then get input frm user
 		 */
 		prompt();
 		signal(SIGINT, handler);
 		line = get_line();
 		/**
-		 * Pass the command to be tokenized,
-		 * Split the directories into tokens,
+		 * Pass the command to tokenize,
+		 * Split directories into tokens,
 		 * Concat directory and input,
 		 *  Check builtins
 		 */

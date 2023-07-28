@@ -1,8 +1,8 @@
 #include "shell.h"
 /**
- *buffers1 - frees line and command
- *@line: pointer to line
- *@command: command
+ *buffers1 - function frees line and command
+ *@line: the pointer to line
+ *@command: the command
  *Return: void
  */
 void buffers1(char *line, char **command)
@@ -34,8 +34,8 @@ void buffers1(char *line, char **command)
 }
 
 /**
- *buffers2 - frees directory and combine
- *@dir: directory
+ *buffers2 - function frees directory and combine
+ *@dir: the directory
  *@combine: combine
  *Return: void
  */
@@ -65,7 +65,7 @@ void buffers2(char **dir, char *combine)
 	}
 }
 /**
- *buffers3 - frees token and buffer
+ *buffers3 - function frees token and buffer
  *@tokens: tokens
  *@buf: buffer
  *Return: void
@@ -96,9 +96,9 @@ void buffers3(char **tokens, char *buf)
 	}
 }
 /**
- *buffers4 - frees tok and buf2
- *@tok: token
- *@buf2: buffer
+ *buffers4 - function frees tok and buf2
+ *@tok: the token
+ *@buf2: the buffer
  *Return: void
  */
 void buffers4(char **tok, char *buf2)
@@ -128,8 +128,8 @@ void buffers4(char **tok, char *buf2)
 }
 
 /**
- *buffers5 - frees dup buffer
- *@dup: dup buffer found in strlen
+ *buffers5 - function frees dup buffer
+ *@dup: the buffer found in strlen
  *Return: void
  */
 void buffers5(char *dup)
