@@ -1,31 +1,31 @@
 #include "shell.h"
 /**
- * _strcmp - function compares strings if match
- * @strng1: The first string arg
- * @strng2: The second string arg
+ * _strcmp - Function compares strings if match
+ * @s1: The first string arg
+ * @s2: The second string argument
  * Return: 0 for success
  */
-int _strcmp(char *strng1, char *strng2)
+int _strcmp(char *s1, char *s2)
 {
-	while ((*strng1 != '\0' && *strng2 != '\0') && *strng1 == *strng2)
+	while ((*s1 != '\0' && *s2 != '\0') && *s1 == *s2)
 	{
-		strng1++;
-		strng2++;
+		s1++;
+		s2++;
 	}
-	if (*strng1 == *strng2)
+	if (*s1 == *s2)
 	{
 		return (0);
 	}
 	else
 	{
-		return (*strng1 - *strng2);
+		return (*s1 - *s2);
 	}
 }
 
 /**
  * _strdup - The function to duplicate string
  * @str: The string input
- * Return: buffer to dup string
+ * Return: The buffer to dupl string
  */
 char *_strdup(char *str)
 {
@@ -47,9 +47,9 @@ char *_strdup(char *str)
 }
 
 /**
- * _strlen - function finds the length of a string
- * @s: The char pointer
- * Return: length of string
+ * _strlen - Function finds the length of a string
+ * @s: The char type pointer
+ * Return: The length of string
  */
 int _strlen(char *s)
 {

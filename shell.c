@@ -2,8 +2,8 @@
 /**
  * main - The main function
  * @argc: The number of arg
- * @argv: The arguement
- * @envp: program’s environment
+ * @argv: arg
+ * @envp: The program’s environ
  * Return: 0 for sucess
  */
 int main(int argc, char **argv, char **envp)

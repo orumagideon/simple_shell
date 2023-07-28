@@ -1,11 +1,11 @@
 #include "shell.h"
 /**
- * path_cat - function concats directory, input to check for builitin
- * @dir: The directory
+ * pathCat - Function concat input to check for builitins.
+ * @dir: directory
  * @input: The user input
- * Return: The buffer to directory
+ * Return: buffer to directory
  */
-char *path_cat(char *dir, char *input)
+char *pathCat(char *dir, char *input)
 {
 	int i, k, len1, len2;
 	char *buf;
@@ -111,10 +111,10 @@ char **dirTok(char **env)
 }
 
 /**
- * checkPath - function checks command input to  path
- * @dir: The dirctory tokens
- * @command: The command line input
- * Return: The full path on success
+ * checkPath - Function checks command input to path
+ * @dir: the dirctory tokens
+ * @command: the command line input
+ * Return: full path on success
  */
 char *checkPath(char **dir, char *command)
 {
@@ -126,7 +126,7 @@ char *checkPath(char **dir, char *command)
 
 	while (*dir)
 	{
-		fullPath = path_cat(*dir, command);
+		fullPath = pathCat(*dir, command);
 		if (stat(fullPath, &st) == 0)
 			return (fullPath);
 		dir++;

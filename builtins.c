@@ -1,8 +1,8 @@
 #include "shell.h"
 
 /**
- * exit_sh - exits from shell
- * @command: The command input
+ * exit_sh - The functin exits from shell
+ * @command: The input from command
  * Return: 0 for success
  */
 int exit_sh(char **command)
@@ -20,8 +20,8 @@ int exit_sh(char **command)
 }
 
 /**
- * cd - Change directory function
- * @command: The input command
+ * cd - changes directory
+ * @command: the input from command
  * Return: 0 for success
  */
 int cd(char **command)
@@ -31,8 +31,8 @@ int cd(char **command)
 }
 
 /**
- * printenv - The print env function
- * @command: Command pointer
+ * printenv - prints environment
+ * @command: the pointer to command
  * Return: 0 for success
  */
 int printenv(char **command)
@@ -53,10 +53,10 @@ int printenv(char **command)
 }
 
 /**
- * checkBuiltins - Call function
- * @combine: complete directory
- * @command: input command
- * Return: Process from directory
+ * checkBuiltins - function checks for builtins.
+ * @combine: complete dir
+ * @command: The comnd line input
+ * Return: the builtin or process from directory
  */
 int checkBuiltins(char *combine, char **command)
 {

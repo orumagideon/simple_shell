@@ -1,7 +1,7 @@
 #include "shell.h"
 
 /**
- * get_line - function gets line from command
+ * get_line - function gets line from user comnd
  * Return: buffer
  */
 char *get_line(void)
@@ -26,8 +26,8 @@ char *get_line(void)
 }
 
 /**
- * split_line - function splits line into tokens
- * @line: command line input
+ * split_line - functions splits line into tokens
+ * @line: The command line input
  * Return: tokens
  */
 char **split_line(char *line)

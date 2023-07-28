@@ -1,7 +1,7 @@
 #include "shell.h"
 
 /**
- * execute - function forks child process to execute cmd
+ * execute - function forks child pid to exete command.
  * @fullPath: The full directory with command
  * @command: The user input
  * Return: status

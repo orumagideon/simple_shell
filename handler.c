@@ -1,8 +1,7 @@
 #include "shell.h"
-
 /**
- * handler - Function determines a signal.
- * @sig: The signal
+ * handler - Function determines signal
+ * @sig: the signal
  * Return: void
  */
 void  handler(int sig)
