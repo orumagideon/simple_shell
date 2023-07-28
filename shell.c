@@ -1,9 +1,9 @@
 #include "shell.h"
 /**
- * main - The main function
- * @argc: The number of arg
- * @argv: arg
- * @envp: The program’s environ
+ * main - main function
+ * @argc: number of arguements
+ * @argv: arguement
+ * @envp: program’s environment
  * Return: 0 for sucess
  */
 int main(int argc, char **argv, char **envp)

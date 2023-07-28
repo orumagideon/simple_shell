@@ -37,4 +37,3 @@ void buffers3(char **tokens, char *buf);
 void buffers4(char **tok, char *buf2);
 void buffers5(char *dup);
 #endif
-

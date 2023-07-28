@@ -1,8 +1,8 @@
 #include "shell.h"
 /**
- * _strcmp - Function compares strings if match
- * @s1: The first string arg
- * @s2: The second string argument
+ * _strcmp - compares to strings to see if they match
+ * @s1: first string argument
+ * @s2: second string argument
  * Return: 0 for success
  */
 int _strcmp(char *s1, char *s2)
@@ -23,9 +23,9 @@ int _strcmp(char *s1, char *s2)
 }
 
 /**
- * _strdup - The function to duplicate string
- * @str: The string input
- * Return: The buffer to dupl string
+ * _strdup - function to duplicate string
+ * @str: string input
+ * Return: buffer to dup string
  */
 char *_strdup(char *str)
 {
@@ -47,9 +47,9 @@ char *_strdup(char *str)
 }
 
 /**
- * _strlen - Function finds the length of a string
- * @s: The char type pointer
- * Return: The length of string
+ * _strlen - finds the length of a string
+ * @s: char type pointer
+ * Return: length of string
  */
 int _strlen(char *s)
 {

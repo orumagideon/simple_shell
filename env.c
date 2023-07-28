@@ -1,7 +1,7 @@
 #include "shell.h"
 /**
- * env - Prints env
- * @env: printed environment.
+ * env - function to print env
+ * @env: enviroment to print
  * Return: void
  */
 void env(char **env)
